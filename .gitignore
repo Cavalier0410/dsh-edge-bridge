@@ -1,0 +1,11 @@
+node_modules/
+backup/
+shots/
+*.log
+.DS_Store
+Thumbs.db
+
+# local browser profiles — never commit these
+profile/
+.edge-mirror/
+.edge-agent/
