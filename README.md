@@ -133,3 +133,27 @@ node src/bcli.mjs '{"op":"eval","args":{"tabId":"<id>","code":"document.title"}}
 ## License
 
 MIT
+
+---
+
+## TL;DR (English)
+
+`dsh-edge-bridge` lets any local agent drive the Edge/Chrome you already use, with two backends:
+
+- **CDP** (`:9222`) — launch Edge with `--remote-debugging-port` on a *dedicated* profile. Durable, millisecond round-trips, no extension.
+- **Extension bridge** (`:9311`) — an MV3 extension that talks to your *current* browser via `chrome.debugger`. Keeps your logins, survives nothing: the worker is recycled, so the long-poll lives in an offscreen document.
+
+```bash
+node src/bcli.mjs '{"op":"tabs"}'
+node src/bcli.mjs '{"op":"eval","args":{"tabId":"<id>","code":"document.title"}}'
+```
+
+Two findings worth knowing (Edge 156 / Chromium 156), both measured:
+
+1. `--remote-debugging-port` is **ignored** when the default user-data-dir is used — the flag is accepted, the port never opens.
+2. Copying a whole profile does **not** carry logins: 3359 cookies in, 43 decryptable out, because of App-Bound Encryption.
+
+So "use my current browser" and "never disconnect" are mutually exclusive on modern Edge. Pick one.
+
+Zero dependencies. Node ≥ 22. Windows scripts included; the protocol itself is portable.
+
